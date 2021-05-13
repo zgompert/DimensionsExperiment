@@ -17,7 +17,7 @@ Plant chemistry data: /uufs/chpc.utah.edu/common/home/gompert-group2/data/dimens
 
 1. *M. sativa*
 
- * Filtered for phiX, Split files, then demultiplexed as per usualls
+ * Filtered for PhiX, Split files, then demultiplexed as per usual. PhiX reference is /uufs/chpc.utah.edu/common/home/u6000989/data/phixSeqIndex/NC_001422.fasta.
 
  * DNA sequences aligned to the *M. sativa* reference genome with `bwa` (0.7.17-r1188) with `bwa mem`
 
@@ -49,3 +49,4 @@ gatk --java-options "-Xmx48g" GenotypeGVCFs -R /uufs/chpc.utah.edu/common/home/g
 Used the following filters: 2X coverage (2496 reads), 10 alt. reads, not fixed, BQRS max abs. = 3, MQRS max abs. 2.5, RPRS max abs. 2, minimum ratio of varriant confidence to non-reference read depth (QD) 2, minimum mapping quality 30, missing data for fewer than 250 (80% with data), biallelic SNPs only
 
 Ended up with 108,451 SNPs in /uufs/chpc.utah.edu/common/home/gompert-group2/data/dimension_med_gbs/Variants/filtered2x_msativa_SG.vcf.
+
