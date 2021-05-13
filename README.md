@@ -19,20 +19,20 @@ Plant chemistry data: /uufs/chpc.utah.edu/common/home/gompert-group2/data/dimens
 
  * Filtered for phiX, Split files, then demultiplexed as per usualls
 
- * DNA sequences aligned to the *M. sativa* reference genome with *bwa* (0.7.17-r1188) with *bwa mem*
+ * DNA sequences aligned to the *M. sativa* reference genome with `bwa` (0.7.17-r1188) with `bwa mem`
 
 ```bash
 bwa mem -t 1 -k 15 -r 1.3 -T 30 -R '@RG\tID:Msativa-ID\tPL:ILLUMINA\tLB:Msativa-ID\tSM:Msativa-ID' /uufs/chpc.utah.edu/common/home/gompert-group2/data/alfalfa_genome/sc_final_genome.fasta ID.fastq > alnID.sam
 ```
 
- * Compress, sort and index with *samtools* (version 1.10)
+ * Compress, sort and index with `samtools` (version 1.10)
 
 ```bash
 samtools view -b -O BAM -o ID.bam ID.sam
 samtools sort -O BAM -o ID.sorted.bam ID.bam
 samtools index -b ID.sorted.bam
 ```
-* Variant calling with *GATK* (version 4.1) (necessary because *M. sativa* is tetraploid)
+* Variant calling with `GATK` (version 4.1) (necessary because *M. sativa* is tetraploid)
 
 ```bash
 ## generate g.vcf files (rep. across individuals)
@@ -44,7 +44,7 @@ gatk --java-options "-Xmx540g" CombineGVCFs -R /uufs/chpc.utah.edu/common/home/g
 gatk --java-options "-Xmx48g" GenotypeGVCFs -R /uufs/chpc.utah.edu/common/home/gompert-group2/data/alfalfa_genome/sc_final_genome.fasta  --heterozygosity 0.001 --intervals 1 --V combinded_med_sativa.g.vcf -O combinded_med_sativa_lg1.vcf
 ## combined  to create combined_SG.g.vcf
 ```
-* Variant filtering with *vcfFilter.pl*
+* Variant filtering with `vcfFilter.pl`
 
 Used the following filters: 2X coverage (2496 reads), 10 alt. reads, not fixed, BQRS max abs. = 3, MQRS max abs. 2.5, RPRS max abs. 2, minimum ratio of varriant confidence to non-reference read depth (QD) 2, minimum mapping quality 30, missing data for fewer than 250 (80% with data), biallelic SNPs only
 
