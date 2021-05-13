@@ -17,6 +17,8 @@ Plant chemistry data: /uufs/chpc.utah.edu/common/home/gompert-group2/data/dimens
 
 1. *M. sativa*
 
+ * Filtered for phiX, Split files, then demultiplexed as per usualls
+
  * DNA sequences aligned to the *M. sativa* reference genome with *bwa* (0.7.17-r1188) with *bwa mem*
 
 ```bash
@@ -40,4 +42,10 @@ gatk --java-options "-Xmx40g" CombineGVCFs -R /uufs/chpc.utah.edu/common/home/go
 gatk --java-options "-Xmx540g" CombineGVCFs -R /uufs/chpc.utah.edu/common/home/gompert-group2/data/alfalfa_genome/sc_final_genome.fasta --variant combinded_1.g.vcf --variant combinded_2.g.vcf --variant combinded_3.g.vcf --variant combinded_4.g.vcf --variant combinded_5.g.vcf --variant combinded_6.g.vcf --variant combinded_7.g.vcf --variant combinded_8.g.vcf --variant combinded_9.g.vcf --variant combinded_10.g.vcf --variant combinded_11.g.vcf --variant combinded_12.g.vcf --variant combinded_13.g.vcf -O combinded_med_sativa.g.vcf
 ## joint variant calling (seperately for each chromosome, here is chrom. 1)
 gatk --java-options "-Xmx48g" GenotypeGVCFs -R /uufs/chpc.utah.edu/common/home/gompert-group2/data/alfalfa_genome/sc_final_genome.fasta  --heterozygosity 0.001 --intervals 1 --V combinded_med_sativa.g.vcf -O combinded_med_sativa_lg1.vcf
+## combined  to create combined_SG.g.vcf
 ```
+* Variant filtering with *vcfFilter.pl*
+
+Used the following filters: 2X coverage (2496 reads), 10 alt. reads, not fixed, BQRS max abs. = 3, MQRS max abs. 2.5, RPRS max abs. 2, minimum ratio of varriant confidence to non-reference read depth (QD) 2, minimum mapping quality 30, missing data for fewer than 250 (80% with data), biallelic SNPs only
+
+Ended up with 108,451 SNPs.
