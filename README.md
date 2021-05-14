@@ -57,3 +57,26 @@ Next, I dropped SNPs with > mean + 3 SD coverage (possible repeats). This left 1
 * Filtered for PhiX, Split files, then demultiplexed as per usual. PhiX reference is /uufs/chpc.utah.edu/common/home/u6000989/data/phixSeqIndex/NC_001422.fasta.
 
 # Estimating genotypes
+
+1. *M. sativa*
+
+* Use LDA of PCA to generate initial values for `entropy` (version 2.0)
+
+````R
+library(data.table)
+g<-as.matrix(fread("pntest_filtered2x_msativa.txt",header=FALSE))
+
+## pca on the genotype covariance matrix
+pcgcov<-prcomp(x=t(g),center=TRUE,scale=FALSE)
+
+## kmeans and lda
+library(MASS)
+k2<-kmeans(pcgcov$x[,1:5],2,iter.max=10,nstart=10,algorithm="Hartigan-Wong")
+k3<-kmeans(pcgcov$x[,1:5],3,iter.max=10,nstart=10,algorithm="Hartigan-Wong")
+
+ldak2<-lda(x=pcgcov$x[,1:5],grouping=k2$cluster,CV=TRUE)
+ldak3<-lda(x=pcgcov$x[,1:5],grouping=k3$cluster,CV=TRUE)
+
+write.table(round(ldak2$posterior,5),file="ldak2.txt",quote=F,row.names=F,col.names=F)
+write.table(round(ldak3$posterior,5),file="ldak3.txt",quote=F,row.names=F,col.names=F)
+````
