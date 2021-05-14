@@ -52,3 +52,8 @@ Ended up with 163,850 SNPs in /uufs/chpc.utah.edu/common/home/gompert-group2/dat
 
 Next, I dropped SNPs with > mean + 3 SD coverage (possible repeats). This left 161,008 SNPs in morefilter_filtered2x_msativa_cg.vcf.
 
+2. *L. melissa*
+
+* Filtered for PhiX, Split files, then demultiplexed as per usual. PhiX reference is /uufs/chpc.utah.edu/common/home/u6000989/data/phixSeqIndex/NC_001422.fasta.
+
+# Estimating genotypes
