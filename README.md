@@ -80,7 +80,7 @@ ldak3<-lda(x=pcgcov$x[,1:5],grouping=k3$cluster,CV=TRUE)
 write.table(round(ldak2$posterior,5),file="ldak2.txt",quote=F,row.names=F,col.names=F)
 write.table(round(ldak3$posterior,5),file="ldak3.txt",quote=F,row.names=F,col.names=F)
 ````
-* Estimate genotypes with `entropy`, with k = 2,3 and 20 chains each. Here is one example:
+* Estimate genotypes with `entropy`, with k = 2,3 and 12 chains each. Here is one example:
 
 ````bash
 entropy_mp ../Variants/filtered2x_msativa.gl -n 4 -m 1 -l 2000 -b 1000 -t 5 -k 2 -out_K2_ch0.hdf5  -q ldak2.txt -s 20
