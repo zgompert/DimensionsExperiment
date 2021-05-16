@@ -61,6 +61,11 @@ Next, I dropped SNPs with > mean + 3 SD coverage (possible repeats). This left 1
 ````bash
 bwa index -a bwtsw Lmel_dovetailPacBio_genome.fasta
 ````
+ * DNA sequences aligned to the *L. melissa* reference genome (see above) with `bwa` (0.7.17-r1188) with `bwa mem`
+
+```bash
+bwa mem -t 1 -k 15 -r 1.3 -T 30 -R '@RG\tID:Lmelissa-ID\tPL:ILLUMINA\tLB:Lmelissa-ID\tSM:L.melissa-ID' /uufs/chpc.utah.edu/common/home/gompert-group3/data/LmelGenome/Lmel_dovetailPacBio_genome.fasta > alnID.sam
+```
 
 # Estimating genotypes
 
