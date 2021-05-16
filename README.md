@@ -56,6 +56,12 @@ Next, I dropped SNPs with > mean + 3 SD coverage (possible repeats). This left 1
 
 * Filtered for PhiX, Split files, then demultiplexed as per usual. PhiX reference is /uufs/chpc.utah.edu/common/home/u6000989/data/phixSeqIndex/NC_001422.fasta.
 
+* Indexed new version of *L. melissa* genome, i.e., dovetail (Hi-C plus Chicago) with PacBio gap filling: /uufs/chpc.utah.edu/common/home/gompert-group3/data/LmelGenome/Lmel_dovetailPacBio_genome.fasta
+
+````bash
+bwa index -a bwtsw Lmel_dovetailPacBio_genome.fasta
+````
+
 # Estimating genotypes
 
 1. *M. sativa*
