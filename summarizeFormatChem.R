@@ -43,7 +43,7 @@ chemSort<-matrix(NA,nrow=1080,ncol=1750)
 for(i in 1:1080){
 	a<-which(fpids==as.character(fmap$ind_plant)[i])
 	if(length(a)==1){
-		chemSort[i,]<-chem[a,]
+		chemSort[i,]<-l2chem[a,]
 	}
 }
 
