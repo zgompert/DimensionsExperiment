@@ -94,10 +94,51 @@ write.table(round(ldak3$posterior,5),file="ldak3.txt",quote=F,row.names=F,col.na
 * Estimate genotypes with `entropy`, with k = 2,3 and 12 chains each. Here is one example:
 
 ````bash
-entropy_mp ../Variants/filtered2x_msativa.gl -n 4 -m 1 -l 2000 -b 1000 -t 5 -k 2 -out_K2_ch0.hdf5  -q ldak2.txt -s 20
+entropy_mp ../Variants/filtered2x_msativa.gl -n 4 -m 1 -l 1000 -b 500 -t 5 -k 2 -out_msat_K2_ch0.hdf5  -q ldak2.txt -s 20
 ````
+* Then summarize the posterior with `estpost.entropy` version 2.0.
+
+```bash
+estpost.entropy -p gprob -s 0 -w 0 out_msat_k*hdf5
+# parameter dimensions for gprob: loci = 161008, ind = 1248, genotypes = 5, chains = 24
+```
 
 2. *L. melissa*
+
+* Use LDA of PCA to generate initial values for `entropy` (version 2.0)
+
+````R
+## see initq_lmel.R
+library(data.table)
+g<-as.matrix(fread("pntest_melissa_filtered2x_lmelissa.txt",header=FALSE))
+
+## pca on the genotype covariance matrix
+pcgcov<-prcomp(x=t(g),center=TRUE,scale=FALSE)
+
+## kmeans and lda
+library(MASS)
+k2<-kmeans(pcgcov$x[,1:5],2,iter.max=10,nstart=10,algorithm="Hartigan-Wong")
+k3<-kmeans(pcgcov$x[,1:5],3,iter.max=10,nstart=10,algorithm="Hartigan-Wong")
+
+ldak2<-lda(x=pcgcov$x[,1:5],grouping=k2$cluster,CV=TRUE)
+ldak3<-lda(x=pcgcov$x[,1:5],grouping=k3$cluster,CV=TRUE)
+
+write.table(round(ldak2$posterior,5),file="ldak2_lmel.txt",quote=F,row.names=F,col.names=F)
+write.table(round(ldak3$posterior,5),file="ldak3_lmel.txt",quote=F,row.names=F,col.names=F)
+
+save(list=ls(),file="initq_lmel.rdat")
+````
+* Estimate genotypes with `entropy`, with k = 2,3 and 12,9 chains. Here is one example:
+
+````bash
+entropy_mp ../Variants/filtered2x_msativa.gl -n 4 -m 1 -l 2000 -b 1000 -t 5 -k 2 -out_K2_ch0.hdf5  -q ldak2_lmel.txt -s 20
+````
+* Then summarize the posterior with `estpost.entropy` version 2.0.
+
+```bash
+estpost.entropy -p gprob -s 0 -w 0 out_k*hdf5
+# 
+```
 
 # Preparing the phenotypic data
 
