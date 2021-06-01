@@ -99,7 +99,7 @@ entropy_mp ../Variants/filtered2x_msativa.gl -n 4 -m 1 -l 1000 -b 500 -t 5 -k 2 
 * Then summarize the posterior with `estpost.entropy` version 2.0.
 
 ```bash
-estpost.entropy -p gprob -s 0 -w 0 out_msat_k*hdf5
+estpost.entropy -p gprob -s 0 -w 0 -o msat_geno.txt out_msat_k*hdf5
 # parameter dimensions for gprob: loci = 161008, ind = 1248, genotypes = 5, chains = 24
 ```
 
