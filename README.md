@@ -128,10 +128,10 @@ write.table(round(ldak3$posterior,5),file="ldak3_lmel.txt",quote=F,row.names=F,c
 
 save(list=ls(),file="initq_lmel.rdat")
 ````
-* Estimate genotypes with `entropy`, with k = 2,3 and 12,9 chains. Here is one example:
+* Estimate genotypes with `entropy`, with k = 2,3 and 12 chains. Here is one example:
 
 ````bash
-entropy_mp ../Variants/filtered2x_msativa.gl -n 4 -m 1 -l 2000 -b 1000 -t 5 -k 2 -out_K2_ch0.hdf5  -q ldak2_lmel.txt -s 20
+entropy_mp ../Variants/filtered2x_msativa.gl -n 2 -m 1 -l 2000 -b 1000 -t 5 -k 2 -out_K2_ch0.hdf5  -q ldak2_lmel.txt -s 20
 ````
 * Then summarize the posterior with `estpost.entropy` version 2.0.
 
