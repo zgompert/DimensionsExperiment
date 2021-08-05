@@ -158,6 +158,6 @@ perl calpost.pl o_lmel_fit_gemmalmel_pheno_rawTraits_ph*ch0.hyp.txt
 perl calpost.pl o_lmel_fit_randomlmel_pheno_rawTraits_ph*ch0.hyp.txt
 perl calpost.pl o_lmel_fit_randomlmel_pheno_residTraits_ph*ch0.hyp.txt
 ```
-* Estimating polygenic scores
+* Estimating polygenic scores, read in genotype matrix and then one trait at a time, do the matrix math
 
 # Key results 
