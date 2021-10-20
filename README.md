@@ -66,6 +66,20 @@ bwa index -a bwtsw Lmel_dovetailPacBio_genome.fasta
 ```bash
 bwa mem -t 1 -k 15 -r 1.3 -T 30 -R '@RG\tID:Lmelissa-ID\tPL:ILLUMINA\tLB:Lmelissa-ID\tSM:L.melissa-ID' /uufs/chpc.utah.edu/common/home/gompert-group3/data/LmelGenome/Lmel_dovetailPacBio_genome.fasta > alnID.sam
 ```
+ * Compress, sort and index with `samtools` (version 1.10)
+
+```bash
+samtools view -b -O BAM -o ID.bam ID.sam
+samtools sort -O BAM -o ID.sorted.bam ID.bam
+samtools index -b ID.sorted.bam
+```
+
+* Variant calling with `bcftools` version 1.9
+
+```bash
+bcftools mpileup -C 50 -d 250 -f /uufs/chpc.utah.edu/common/home/gompert-group3/data/LmelGenome/Lmel_dovetailPacBio_genome.fasta -q 30 -Q 20 -I -b lmel_bams.txt -o lmel_variants.bcf -O u -a FORMAT/AD,FORMAT/DP
+bcftools call -v -c -p 0.01 -P 0.001 -O v -o lmel_variants.vcf lmel_variants.bcf 
+```
 
 # Estimating genotypes
 
