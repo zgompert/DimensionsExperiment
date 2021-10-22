@@ -81,6 +81,14 @@ bcftools mpileup -C 50 -d 250 -f /uufs/chpc.utah.edu/common/home/gompert-group3/
 bcftools call -v -c -p 0.01 -P 0.001 -O v -o lmel_variants.vcf lmel_variants.bcf 
 ```
 
+* Variant filtering with `vcfFilter.pl` and `filterSomeMore.pl`
+
+Used the following filters: 2X coverage (2302 reads), 10 alt. reads, not fixed, Man-Whitney P for BQB = 0.01, Man-Whitney P for RPB = 0.01, minimum mapping quality 30, missing data for fewer than 230 (80% with data), biallelic SNPs only.
+
+Ended up with 64,061 SNPs in /uufs/chpc.utah.edu/common/home/gompert-group2/data/dimension_lyc_gbs/Variants/filtered2x_lmel_variants.vcf. 
+
+Next, I dropped SNPs with > mean + 3 SD coverage (possible repeats). This left 63,194 SNPs in morefilter_filtered2x_lmel_variants.vcf.
+
 # Estimating genotypes
 
 1. *M. sativa*
