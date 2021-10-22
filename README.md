@@ -162,6 +162,23 @@ estpost.entropy -p gprob -s 0 -w 0 out_k*hdf5
 # 
 ```
 
+# Desribing genetic variation
+
+I summarized patterns of genetic variation for the *M. sativa* and *L. melissa* individuals for the experiment based on the genotype data. This was done in `R`, see `plotPCAwMap.R`. PCA was perofrmed on the centered (but not standaridzed) gentoypes. Point estimates of allele frequencies for each source population were calcualted as the mean genotype for each locus and population divided by two. These were then used to estimate Nei's Gst, i.e.,:
+
+```{R}
+## fst (Nei Gst)
+fst<-function(P=NA){
+        ## P = allele freq. matrix, cols=pops, rows=SNPs
+        H<-P * (1-P) * 2
+        Hw<-apply(H,1,mean)## mean across pops for each locus
+        pbar<-apply(P,1,mean)
+        Ht<-pbar * (1-pbar) * 2
+        Fst<-1 - mean(Hw)/mean(Ht)
+        return(Fst)
+}
+```
+
 # Preparing the phenotypic data
 
 * Phenotypic data are in /uufs/chpc.utah.edu/common/home/gompert-group2/projects/dimensions_cg_experiment/Pheno/. These include chemistry data (log2, 1750 features plus 6 PCs), ...
