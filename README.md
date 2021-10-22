@@ -184,6 +184,8 @@ fst<-function(P=NA){
 
 * The main analyses use the data from the field plot. Data from the science garden and BST, which were used to validate/test our models, will be dealt with below. I used Moran's eigenvector maps to remove possible effects of space (location) within the common gardent. This essentially involves creating spatial variables based on a PCoA of a truncated (at nearest neighbors) Euclidean distane matrix, see for example [Dray et al., 2006](https://www.sciencedirect.com/science/article/pii/S0304380006000925?casa_token=DIpYsGyIWGAAAAAA:vJCYcARQofbW-Q_GZ3koZpW47d3kj88TlmVKg8nB5p-eysSmKrXbG7aw_MDc-qY5fkkkHsfNvg). I then used forward selection of variables following [Blanchet et al., 2008](https://esajournals.onlinelibrary.wiley.com/doi/pdf/10.1890/07-0986.1?casa_token=EC3ZTIn92BoAAAAA:B3sPgrMDh5WOBS8s6mecbJF34wl1jZseYoRa87orTzmzFceYwdmeNnX573UjI1RnlQ9ixLwztF1eWQ) to select spatial variables (eigenvectors) that explained each trait. Scaled residulas from these analyses (along with scaled versions of the original variables) were then used for analysis. See [summarizeFormatChem.R](summarizeFormatChem.R).
 
+* Complementary analyses/code for cleaning and formatting caterpillar perfomance data, including removing the effect of hatch date, are [cleanCats.R](cleanCats.R) and  [summarizeFormatCats.R](summarizeFormatCats.R).
+
 # Estimating PVE and polygenic scores with using BSLMMs with gemma
 
 * Commands for running gemma
