@@ -159,12 +159,11 @@ entropy_mp ../Variants/filtered2x_msativa.gl -n 2 -m 1 -l 2000 -b 1000 -t 5 -k 2
 
 ```bash
 estpost.entropy -p gprob -s 0 -w 0 out_k*hdf5
-# 
 ```
 
 # Desribing genetic variation
 
-I summarized patterns of genetic variation for the *M. sativa* and *L. melissa* individuals for the experiment based on the genotype data. This was done in `R`, see `plotPCAwMap.R`. PCA was perofrmed on the centered (but not standaridzed) gentoypes. Point estimates of allele frequencies for each source population were calcualted as the mean genotype for each locus and population divided by two. These were then used to estimate Nei's Gst, i.e.,:
+I summarized patterns of genetic variation for the *M. sativa* and *L. melissa* individuals for the experiment based on the genotype data. This was done in `R`, see [plotPCAwMap.R](plotPCAwMap.R). PCA was perofrmed on the centered (but not standaridzed) gentoypes. Point estimates of allele frequencies for each source population were calcualted as the mean genotype for each locus and population divided by two. These were then used to estimate Nei's Gst, i.e.,:
 
 ```{R}
 ## fst (Nei Gst)
