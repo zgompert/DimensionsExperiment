@@ -186,17 +186,51 @@ fst<-function(P=NA){
 
 * Complementary analyses/code for cleaning and formatting caterpillar perfomance data, including removing the effect of hatch date, are [cleanCats.R](cleanCats.R) and  [summarizeFormatCats.R](summarizeFormatCats.R).
 
-# Estimating PVE and polygenic scores with using BSLMMs with gemma
+# Estimating PVE and polygenic scores for caterpillar performance with using BSLMMs with gemma
 
-* Commands for running gemma
+* I used `gemma` (version 0.95a) to estimate PVE and polygenic scores for the caterpillar performance traits based on *M. sativa* genotypes, *L. melissa* genotypes and genetic data from both species combined. Here is an example perl fork script for this that was used to fit models for the actual data set and a randomized version of the data set. The basic parameters, burnin = , length of chain = and running 10 chains total were used in all cases.
 
-* Summarizing posteriors for performance traits based on caterpillar genetics
+```{perl}
+#!/usr/bin/perl
+#
+# fit gemma BSLMM for M. sativa, non-chemistry, real and randomized 
+#
+use Parallel::ForkManager;
+my $max = 80;
+my $pm = Parallel::ForkManager->new($max);
+
+$g = "msat_geno";
+
+foreach $p (@ARGV){
+        open(WC, "head -n 1 $p | wc|");
+        $wc = <WC>;
+        @wc = split(/\s+/,$wc);
+        $Nph = $wc[2];
+        $p =~ m/^([a-zA-Z_]+)/;
+        $base = $1;
+
+        foreach $ph (1..$Nph){ 
+                foreach $ch (0..9){
+                        sleep 2;
+                        $pm->start and next;
+                        $o = "o_msat_fit_$base"."_ph$ph"."_ch$ch";
+                        system "gemma -g $g -p $p -bslmm 1 -n $ph -o $o -maf 0 -w 200000 -s 1000000\n";
+                        $pm->finish;
+                }
+        }
+}
+$pm->wait_all_children;
+```
+
+* In each case, I then summarized hyperparameter posteriors and obtained estimates of model-averaged effects. See the example below, and [calpost.pl](calpost.pl) and [grabMavEffects.pl](grabMavEffects.pl)
 
 ```bash
 perl calpost.pl o_lmel_fit_gemmalmel_pheno_residTraits_ph*ch0.hyp.txt
 perl calpost.pl o_lmel_fit_gemmalmel_pheno_rawTraits_ph*ch0.hyp.txt
 perl calpost.pl o_lmel_fit_randomlmel_pheno_rawTraits_ph*ch0.hyp.txt
 perl calpost.pl o_lmel_fit_randomlmel_pheno_residTraits_ph*ch0.hyp.txt
+
+perl grabMavEffects.pl o_lmel_fit_randomlmel_pheno_residTraits_ph*ch0.param.txt
 ```
 * Estimating polygenic scores, read in genotype matrix and then one trait at a time, do the matrix math
 
