@@ -234,4 +234,36 @@ perl grabMavEffects.pl o_lmel_fit_randomlmel_pheno_residTraits_ph*ch0.param.txt
 ```
 * Estimating polygenic scores, read in genotype matrix and then one trait at a time, do the matrix math
 
-# Key results 
+# Within garden genomic prediction and cross-validation
+
+I used 10-fold cross-validation to predict caterpillar performance from *M. sativa* genetics, *L. melissa* genetics, and *M. sativa* + *L. melissa* genetics. This first involved creating 10 data sets for each variable each with a random ~10% of individuals with data set to NA (the test set; the other 90% served as the training set). See [mkCvPheno.R](mkCvPheno.R).
+
+I then ran `gemma` 10 times per original performance trait, that is, once per cross-validation data set with only a single chain in each case. This included the model fit and genomic prediction for the missing (test) individuals. See, e.g., the code blow for the case of *M. sativa* (scripts for other genetic data were essentially identical). 
+
+```{perl}
+use Parallel::ForkManager;
+my $max = 80;
+my $pm = Parallel::ForkManager->new($max);
+
+$g = "msat_geno";
+
+foreach $p (@ARGV){
+	open(WC, "head -n 1 $p | wc|");
+	$wc = <WC>;
+	@wc = split(/\s+/,$wc);
+	$Nph = $wc[2];
+	$p =~ m/^([a-zA-Z_]+)/;
+	$base = $1;
+
+	foreach $ph (1..$Nph){ 
+		$ch = 0;
+		sleep 2;
+		$pm->start and next;
+		$o = "o_msat_fit_$base"."_ph$ph"."_ch$ch";
+    		system "gemma -g $g -p $p -bslmm 1 -n $ph -o $o -outdir output_cv -maf 0 -w 200000 -s 1000000\n";
+    		system "gemma -g $g -p $p -n $ph -o $o -maf 0 -epm output_cv/$o.param.txt -emu output_cv/$o.log.txt -predict 1 -o pred_$o -outdir output_cv \n";
+		$pm->finish;
+	}
+}
+$pm->wait_all_children;
+```
