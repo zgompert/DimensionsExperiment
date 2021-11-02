@@ -267,3 +267,10 @@ foreach $p (@ARGV){
 }
 $pm->wait_all_children;
 ```
+
+# Predictive power between gardens
+
+I next tested our ability to predict caterpillar performance trait values from genotype by generating genomic predictions of performance for caterpillars reared on *M. sativa* from a second, smaller common garden comprising 180 *M. sativa*. This second garden, planted on the USU campus (i.e., the [Science Garden](https://biology.usu.edu/sciencegarden/)), included plants from six of the 11 *M. sativa* source sites (30 plants per site from six maternal families) and caterpillars from each of the sites used in the main experiment (ALP, APLL, AWFS, BST, VUH, and VIC).
+
+I calculated genomic predictions of performance trais based on from model-avereage effects for plant, caterpillar or plant and caterpillar genetics inferred from the main garden and genotype estimates for the 172 plants and 156 caterpillars successfully sequenced from the common gardent. I then computed the Pearson correlation between observed (after removing effects of hatch date and block) and predicted performance for each trait/genetic data set as a metric of predictive perofrmance. See [GenPredsSG.R](GenPredsSG.R).
+
