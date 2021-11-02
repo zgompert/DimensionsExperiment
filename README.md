@@ -232,7 +232,7 @@ perl calpost.pl o_lmel_fit_randomlmel_pheno_residTraits_ph*ch0.hyp.txt
 
 perl grabMavEffects.pl o_lmel_fit_randomlmel_pheno_residTraits_ph*ch0.param.txt
 ```
-* Estimating polygenic scores, read in genotype matrix and then one trait at a time, do the matrix math
+* Next, I estimated polygenic scores for the performance traits based on plant, caterpillar or combined genetics. I did this using model-averaged effect estimates (i.e., all genetic loci contributed to some extent). For details of this calculation, along with some summary plots, see [mkGenArchPlots.R](mkGenArchPlots.R). 
 
 # Within garden genomic prediction and cross-validation
 
