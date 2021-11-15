@@ -277,3 +277,44 @@ I calculated genomic predictions of performance trais based on from model-averea
 # USU greenhouse experiment
 
 We conducted another complimentary experiment using greenhouse-grown *M. sativa* in 2018. This experiment again used plants from ALP, APLL, AWFS, BST, VUH and VIC (1001 total), but included caterpillars from four *L. melissa* populations (6-13 females per site, 672 caterpillars total), *Colias eurytheme* from the Greenville Farm garden (20 females caught, 133 caterpillars total) and *Vanessa cardui* from Carolina Biological (five units of 30-35 eggs, 196 caterpillars total). Lauren's initial notes on this experiment are on the [old site](https://sites.google.com/site/gompertlabnotes/home/researcher-pages/lauren-lucas/alfalfa-2018). Tara completed many initial analyses of this experiment as well. Here, I am focused on two questions: (i) does among-population plant (and caterpillar for *L. melissa*) variation matter for 8 and 14 day weight (performance), and (ii) does plant genotype (population) have consistent effects of caterpillar performance across different butterfly populations and species. I addressed (i) by estimating variance components for plant (and caterpillar) population and (ii) by computing correlations in plant effects across butterfly populations and species.  See [VarComps.R](VarComps.R) for details, but the short answer is that plant genetics matters (more for 14 day weight), caterpillar genetics matters for 8 day weight in *L. melissa*, and plant population effects on performance are remarkably consitent across butterfly populations and species.
+
+# Plant trait mapping
+
+I used the same BSLMM approach to map 1760 plant traits from the Greenville Experimental Farm garden; *N* = 1080 individuals. These included 9 morphological traits: leaf length, leaf width, leaf area, leaf shape, leaf dry weight, SLA, trichome density, leaf toughness and plant height ; field herbivory; and 1750 chemical features (led by Casey at UNR). Mearements data are all from summer 2019. See [notes and data from google drive](https://drive.google.com/drive/folders/1gEP_t7SxYBe579Sj8JPUGOea6yxtyHQS?usp=sharing). Data are in `/uufs/chpc.utah.edu/common/home/gompert-group2/projects/dimensions_cg_experiment/Pheno`.
+
+First, I removed spatial effects on plant traits using stepwise regression with Moran's eigenvector spatial coordinates as was done for caterpillar performance. See [summarizeFormatChem.R](summarizeFormatChem.R) and [summarizeFormatPlantTr.R](summarizeFormatPlantTr.R). Then mapping was done with `gemma` version (). This always invovled 10 chains each of 1 million steps and a 200,000 step burnin. Here is an example of the `perl` conrol script (done in many batches as this was huge):
+
+```{perl}
+#!/usr/bin/perl
+
+use Parallel::ForkManager;
+#my $max = 50;
+my $max = 60;
+my $pm = Parallel::ForkManager->new($max);
+
+$g = "msat_geno";
+$ph_lb = 1701;
+$ph_ub = 1750;
+#$dir = "output_rawchem_$ph_ub";
+$dir = "output_ranchem_$ph_ub";
+#$dir = "output_chem_$ph_ub";
+
+foreach $p (@ARGV){
+        $p =~ m/^([a-zA-Z_]+)/;
+        $base = $1;
+
+        foreach $ph ($ph_lb .. $ph_ub){ 
+                foreach $ch (0..9){
+                        sleep 2;
+                        $pm->start and next;
+                        $o = "o_msat_fit_$base"."_ph$ph"."_ch$ch";
+                        system "gemma -g $g -p $p -bslmm 1 -n $ph -o $o -maf 0 -w 200000 -s 1000000 -outdir $dir\n";
+                        $pm->finish;
+                }
+        }
+}
+```
+This entire procedure was repeated for 1760 randomized data sets, one randomized data set for each of the original 1760 traits. Bulk MCMC results are in teh `output_chem*` and `output_ranchem` subdirectories. Posteriores were summarized exactly as was done for the performance traits. Model-averaged estimates of of SNP effects for all traits are in `/uufs/chpc.utah.edu/common/home/gompert-group2/projects/dimensions_cg_experiment/Gemma/files_mav`. These were used to compute polygenic scores, see [computePolyScores.R](computePolyScores.R).
+
+# LASSO regression models for caterpillar performance as a function of plant-trait polygenic scores
+
