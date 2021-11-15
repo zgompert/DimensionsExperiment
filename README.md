@@ -318,3 +318,4 @@ This entire procedure was repeated for 1760 randomized data sets, one randomized
 
 # LASSO regression models for caterpillar performance as a function of plant-trait polygenic scores
 
+We next used LASSO regression to fit models for the polygenic scores for each caterpillar performance trait (based on *M. sativa*) genetics as a function of the polygenic scores from all 1760 plant traits. This was done with `glmnet` in `R` (versions XX) and used 10-fold cross-validation to selection $\lambda$. I also measured both variance explained by the model and the 10-fold cross-validation predictive power. See [glmnetPerformPS.R](glmnetPerformPS.R).
