@@ -140,6 +140,12 @@ cnms[tchem]
 #[18] "MESA.584"                                                                 
 #[19] "MESA.972"                                                                 
 #[20] "MESA.1185"
+
+btab<-round(betasRaw[tchem,],3)
+#rownames(btab)<-cnms[tchem]
+traits<-c("W8d","W14d","WPup","S8d","S14d","SPup","SAdu","Stot","Stime")
+colnames(btab)<-traits
+
 #######################################################
 
 
