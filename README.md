@@ -177,6 +177,7 @@ fst<-function(P=NA){
         return(Fst)
 }
 ```
+I also computed LD between pairs of linked SNPs and summarized this at different distances. LD drops off quickly in *L. melissa* and is low in general; LD is a bit higher in *M. sativa* but still decays quickly to background levels [caldLD.R](caldLD.R).
 
 # Preparing the phenotypic data
 
@@ -319,6 +320,8 @@ This entire procedure was repeated for 1760 randomized data sets, one randomized
 # LASSO regression models for caterpillar performance as a function of plant-trait polygenic scores
 
 We next used LASSO regression to fit models for the polygenic scores for each caterpillar performance trait (based on *M. sativa*) genetics as a function of the polygenic scores from all 1760 plant traits. This was done with `glmnet` (version  4.0-2) in `R` and used 10-fold cross-validation to selection lambda. I also measured both variance explained by the model and the 10-fold cross-validation predictive power. See [glmnetPerformPS.R](glmnetPerformPS.R). Variance explained was compared for the observed versus randomized response variables.
+
+As a test of how many *independent* genetic factors (from *M. sativa*) contributed to the caterpillar performance polygenic scores, I also fit LASSO models on PCs of the plant trait and chemistry polygenic scores. These gave generally similar results to the analyses above providing (I think) pretty clear evidence of many genetic variants involved in different traits contributing [glmnetPerformPS_PCA.R](glmnetPerformPS_PCA.R).
 
 I repeated this analysis with observed performance values (residuals after hatch data and space, but not polygenic scores). Here too randomized data sets were also analyzed. See [glmnetPSObs.R](glmnetPSObs.R).
 
