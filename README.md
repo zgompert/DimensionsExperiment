@@ -189,7 +189,7 @@ I also computed LD between pairs of linked SNPs and summarized this at different
 
 # Estimating PVE and polygenic scores for caterpillar performance with using BSLMMs with gemma
 
-* I used `gemma` (version 0.95a) to estimate PVE and polygenic scores for the caterpillar performance traits based on *M. sativa* genotypes, *L. melissa* genotypes and genetic data from both species combined. Here is an example perl fork script for this that was used to fit models for the actual data set and a randomized version of the data set. The basic parameters, burnin = , length of chain = and running 10 chains total were used in all cases.
+* I used `gemma` (version 0.95a) to estimate PVE and polygenic scores for the caterpillar performance traits based on *M. sativa* genotypes, *L. melissa* genotypes and genetic data from both species combined. Here is an example perl fork script for this that was used to fit models for the actual data set and a randomized version of the data set. The basic parameters, burnin = , length of chain = and running 10 chains total were used in all cases. Seems to be solid in term of MCMC performance [calcDiags.R](calcDiags.R).
 
 ```{perl}
 #!/usr/bin/perl
@@ -326,3 +326,75 @@ As a test of how many *independent* genetic factors (from *M. sativa*) contribut
 I repeated this analysis with observed performance values (residuals after hatch data and space, but not polygenic scores). Here too randomized data sets were also analyzed. See [glmnetPSObs.R](glmnetPSObs.R).
 
 Next, I fit LASSO regression models that allowed for interactions between plant-trait polygenic scores and caterpillar genotype. For *L. melissa* caterpillar genotype I used the first four PCs from a PCA of the caterpillar genotype matrix. These PCs were also included as main effects. See [glmnetPerformPS_epistasis.R](glmnetPerformPS_epistasis.R). Finally, I repeated these analyses with the observed performance data rather than polygenic scores (but still using residuals) to make sure the poor fit of the interaction models was not simply due to the additive models used to estimate performance polygenic scores. This gave generally similar results, with not overtall increase in explanatory power for models with epsistasis. See [glmnetPerformObs_epistasis.R](glmnetPerformObs_epistasis.R).
+
+# New analyses testing for marginal and pairwise epistasis
+
+I tested for epistatic interactions affecting caterpillar performance among (i) the 161,008 *M. sativa* SNPs, (ii) the 63,194 *L. melissa* SNPs, and (iii) the 224,202 SNPs from both species (this includes within and between species epistatic interactions). This was done [`MAPIT`](https://github.com/lorinanthony/MAPIT). This program tests for marginal epistasis (interaction between each SNP and any other SNP, i.e., non-zero variance compenent). See [batchRunMapitMsat.R](batchRunMapitMsat.R), [batchRunMapitLmel.R](batchRunMapitLmel.R), and [batchRunMapit.R](batchRunMapit.R). Nothing significant for weight (genome-level that is) and at least some of the survival traits show an obvious excess of false positives and weird differences in control for *M. sativa* vs *L. melissa* in the combined analysis. So, just focusing on weight. 
+
+I added all pairwise interactions (product of standardized genotypes) among the top 150 SNPs (per species or both combined; lowest P values for marginal epistasis) for each caterpillar performance trait to BSLMM runs for `gemma`, as shown in [mkPairEpiFilesV2.R](mkPairEpiFilesV2.R) and [mkPairEpiFilesBetweenV2.R](mkPairEpiFilesBetweenV2.R). I then fit these models with `gemma` to see if the PVE went up with epistasis included.
+
+```{perl}
+#!/usr/bin/perl
+#
+# fit gemma BSLMM for within species with epistasis 
+#
+
+use Parallel::ForkManager;
+my $max = 80;
+my $pm = Parallel::ForkManager->new($max);
+
+@G = ("epix_comb_geno","epix_lmel_geno","epix_msat_geno");
+@P = ("subgemma_pheno_residTraits.txt","gemmalmel_pheno_residTraits.txt","gemma_pheno_residTraits.txt");
+
+foreach $gf (@G){
+	$p = shift(@P);
+	foreach $ph (1..3){
+		$g = "$gf"."_$ph";	
+		$g1 = $gf;
+		$g1 =~ s/epix_// or die;
+		foreach $ch (0..9){
+			sleep 2;
+			$pm->start and next;
+			$o = "o_$g"."_ch$ch";
+			system "gemma -g $g1 -p $p -n $ph -gk 1 -outdir output_epix -o $o\n";
+    			system "gemma -g $g -p $p -bslmm 1 -n $ph -k output_epix/$o.cXX.txt -outdir output_epix -o $o -maf 0 -notsnp -w 300000 -s 1500000\n";
+			$pm->finish;
+		}
+	}
+}
+$pm->wait_all_children;
+```
+
+```{perl}
+#!/usr/bin/perl
+#
+# fit gemma BSLMM for combined M. sativa and L. melissa
+#
+
+use Parallel::ForkManager;
+my $max = 80;
+my $pm = Parallel::ForkManager->new($max);
+
+$g = "comb_geno";
+
+foreach $p (@ARGV){
+	open(WC, "head -n 1 $p | wc|");
+	$wc = <WC>;
+	@wc = split(/\s+/,$wc);
+	$Nph = $wc[2];
+	$p =~ m/^([a-zA-Z_]+)/;
+	$base = $1;
+
+	foreach $ph (1..$Nph){ 
+		foreach $ch (0..9){
+			sleep 2;
+			$pm->start and next;
+			$o = "o_comb_fit_$base"."_ph$ph"."_ch$ch";
+    			system "gemma -outdir output_comb -g $g -p $p -bslmm 1 -n $ph -o $o -maf 0 -w 200000 -s 1000000\n";
+			$pm->finish;
+		}
+	}
+}
+$pm->wait_all_children;
+```
+In general, PVE did not go up.
